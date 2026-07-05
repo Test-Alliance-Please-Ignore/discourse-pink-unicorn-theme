@@ -152,6 +152,13 @@ body.pink-unicorn-theme-forced .sidebar-section-wrapper {
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
+body.pink-unicorn-theme-forced .sidebar-wrapper,
+body.pink-unicorn-theme-forced .sidebar-container {
+  overflow-x: visible;
+  position: relative;
+  z-index: 30;
+}
+
 body.pink-unicorn-theme-forced .sidebar-section-wrapper {
   backdrop-filter: none;
   background: transparent;
@@ -198,9 +205,18 @@ body.pink-unicorn-theme-forced .sidebar-container :is(details, .sidebar-section-
   overflow: visible;
 }
 
+body.pink-unicorn-theme-forced
+  .sidebar-wrapper
+  :is(.sidebar-sections, .sidebar-scroll-wrap, .sidebar-section-content),
+body.pink-unicorn-theme-forced
+  .sidebar-container
+  :is(.sidebar-sections, .sidebar-scroll-wrap, .sidebar-section-content) {
+  overflow: visible;
+}
+
 body.pink-unicorn-theme-forced .sidebar-wrapper .sidebar-section-wrapper:has(details[open]),
 body.pink-unicorn-theme-forced .sidebar-container .sidebar-section-wrapper:has(details[open]) {
-  z-index: 6;
+  z-index: 40;
 }
 
 body.pink-unicorn-theme-forced .sidebar-wrapper details,
@@ -211,13 +227,13 @@ body.pink-unicorn-theme-forced .sidebar-container details {
 body.pink-unicorn-theme-forced .sidebar-wrapper details[open],
 body.pink-unicorn-theme-forced .sidebar-container details[open] {
   position: relative;
-  z-index: 4;
+  z-index: 40;
 }
 
 body.pink-unicorn-theme-forced .sidebar-wrapper details[open] > :not(summary),
 body.pink-unicorn-theme-forced .sidebar-container details[open] > :not(summary) {
   position: relative;
-  z-index: 4;
+  z-index: 40;
 }
 
 body.pink-unicorn-theme-forced .topic-list-item,
