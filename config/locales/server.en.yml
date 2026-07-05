@@ -1,0 +1,6 @@
+en:
+  site_settings:
+    pink_unicorn_theme_enabled: "Enable the forced pink unicorn forum skin"
+    pink_unicorn_theme_groups: "Groups that should receive the forced pink unicorn forum skin"
+    pink_unicorn_theme_unicorn_count: "How many animated unicorns drift across the page"
+    pink_unicorn_theme_animation_speed: "Base number of seconds each unicorn takes to cross the screen"

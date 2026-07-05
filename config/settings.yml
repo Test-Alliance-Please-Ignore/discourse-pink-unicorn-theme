@@ -1,0 +1,20 @@
+plugins:
+  pink_unicorn_theme_enabled:
+    default: true
+    client: true
+  pink_unicorn_theme_groups:
+    type: group_list
+    list_type: compact
+    default: ""
+    allow_any: false
+    refresh: true
+  pink_unicorn_theme_unicorn_count:
+    default: 10
+    min: 4
+    max: 24
+    client: true
+  pink_unicorn_theme_animation_speed:
+    default: 22
+    min: 8
+    max: 60
+    client: true
