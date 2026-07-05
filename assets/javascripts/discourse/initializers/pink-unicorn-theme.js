@@ -49,6 +49,15 @@ function hideThemeControls() {
   });
 }
 
+function shouldHideThemeControls() {
+  const pathname = window.location?.pathname || "";
+
+  return (
+    /^\/my\/preferences(\/|$)/.test(pathname) ||
+    /^\/u\/[^/]+\/preferences(\/|$)/.test(pathname)
+  );
+}
+
 function createUnicorn(index, total, baseSpeed) {
   const unicorn = document.createElement("span");
   const duration = baseSpeed + ((index * 3) % 11);
@@ -104,7 +113,9 @@ function ensureOverlay(siteSettings) {
 function applyPinkUnicornTheme(siteSettings) {
   ensureRootClass();
   ensureOverlay(siteSettings);
-  hideThemeControls();
+  if (shouldHideThemeControls()) {
+    hideThemeControls();
+  }
 }
 
 export default {
