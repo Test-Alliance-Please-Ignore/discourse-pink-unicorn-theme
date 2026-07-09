@@ -3,6 +3,9 @@ import { withPluginApi } from "discourse/lib/plugin-api";
 const ROOT_CLASS = "pink-unicorn-theme-forced";
 const OVERLAY_ID = "pink-unicorn-theme-overlay";
 const UNICORN_CLASS = "pink-unicorn-theme-unicorn";
+const UNICORN_ICON_CLASS = "pink-unicorn-theme-unicorn-icon";
+const MIN_SPIN_DURATION_MS = 30000;
+const MAX_SPIN_DURATION_MS = 60000;
 const THEME_CONTROL_SELECTORS = [
   "[name='theme_ids']",
   "[name='color_scheme_id']",
@@ -58,8 +61,52 @@ function shouldHideThemeControls() {
   );
 }
 
+function randomSpinDuration() {
+  return Math.round(
+    MIN_SPIN_DURATION_MS +
+      Math.random() * (MAX_SPIN_DURATION_MS - MIN_SPIN_DURATION_MS)
+  );
+}
+
+function clearUnicornSpin(unicorn) {
+  if (unicorn.pinkUnicornSpinTimer) {
+    window.clearTimeout(unicorn.pinkUnicornSpinTimer);
+    unicorn.pinkUnicornSpinTimer = null;
+  }
+
+  if (unicorn.pinkUnicornSpinFrame) {
+    window.cancelAnimationFrame(unicorn.pinkUnicornSpinFrame);
+    unicorn.pinkUnicornSpinFrame = null;
+  }
+}
+
+function advanceUnicornSpin(unicorn) {
+  clearUnicornSpin(unicorn);
+  if (!unicorn.isConnected) {
+    return;
+  }
+
+  const duration = randomSpinDuration();
+  const nextAngle = Number(unicorn.dataset.spinAngle || 0) + 1;
+  unicorn.style.setProperty("--pink-unicorn-spin-duration", `${duration}ms`);
+  unicorn.pinkUnicornSpinFrame = window.requestAnimationFrame(() => {
+    unicorn.pinkUnicornSpinFrame = null;
+    if (!unicorn.isConnected) {
+      return;
+    }
+
+    unicorn.dataset.spinAngle = String(nextAngle);
+    unicorn.style.setProperty("--pink-unicorn-spin-angle", `${nextAngle}deg`);
+  });
+
+  unicorn.pinkUnicornSpinTimer = window.setTimeout(() => {
+    advanceUnicornSpin(unicorn);
+  }, duration);
+}
+
 function createUnicorn(index, total, baseSpeed) {
   const unicorn = document.createElement("span");
+  const icon = document.createElement("span");
   const duration = baseSpeed + ((index * 3) % 11);
   const delay = index * -2.35;
   const top = ((index + 1) / (total + 1)) * 100;
@@ -68,12 +115,15 @@ function createUnicorn(index, total, baseSpeed) {
   const sparkle = index % 2 === 0 ? " ✨" : "";
 
   unicorn.className = UNICORN_CLASS;
-  unicorn.textContent = `🦄${sparkle}`;
+  icon.className = UNICORN_ICON_CLASS;
+  icon.textContent = `🦄${sparkle}`;
+  unicorn.appendChild(icon);
   unicorn.style.setProperty("--pink-unicorn-top", `${top}%`);
   unicorn.style.setProperty("--pink-unicorn-duration", `${duration}s`);
   unicorn.style.setProperty("--pink-unicorn-delay", `${delay}s`);
   unicorn.style.setProperty("--pink-unicorn-size", `${size}rem`);
   unicorn.style.setProperty("--pink-unicorn-drift", `${drift}vh`);
+  unicorn.style.setProperty("--pink-unicorn-spin-angle", "0deg");
 
   return unicorn;
 }
@@ -103,10 +153,13 @@ function ensureOverlay(siteSettings) {
   }
 
   overlay.dataset.count = String(count);
+  Array.from(overlay.children).forEach(clearUnicornSpin);
   overlay.innerHTML = "";
 
   for (let index = 0; index < count; index += 1) {
-    overlay.appendChild(createUnicorn(index, count, baseSpeed));
+    const unicorn = createUnicorn(index, count, baseSpeed);
+    overlay.appendChild(unicorn);
+    advanceUnicornSpin(unicorn);
   }
 }
 
